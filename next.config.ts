@@ -1,15 +1,23 @@
 import type { NextConfig } from "next";
-import withPWA from "next-pwa";
 
-const pwaConfig = withPWA({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-  register: true,
-  skipWaiting: true,
-});
+const isDev = process.env.NODE_ENV === "development";
 
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
+// next-pwa uses webpack, which conflicts with Turbopack in dev.
+// Only wrap with PWA in production builds.
+const buildConfig = async (): Promise<NextConfig> => {
+  const base: NextConfig = {
+    reactStrictMode: true,
+    turbopack: {},
+  };
+
+  if (isDev) return base;
+
+  const withPWA = (await import("next-pwa")).default;
+  return withPWA({
+    dest: "public",
+    register: true,
+    skipWaiting: true,
+  })(base);
 };
 
-export default pwaConfig(nextConfig);
+export default buildConfig();
