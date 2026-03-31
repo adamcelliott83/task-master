@@ -1,0 +1,6 @@
+Name,Type,Status,Description,Priority,Estimated Minutes,Recurrence Days,Due Date,Consequence,Consequence Severity,Notion ID,URL
+Morning workout,DAILY,PENDING,30 mins cardio or strength training,high,30,"mon,wed,fri",,No TV until workout done,HIGH,,
+Read for 20 minutes,DAILY,PENDING,Read a book or articles,medium,20,"mon,tue,wed,thu,fri",,No social media until done,MEDIUM,,
+Weekly review,WEEKLY,PENDING,Review goals and plan next week,high,60,sun,,Must do it before Monday,HIGH,,
+Grocery shopping,WEEKLY,PENDING,Shop for the week,medium,45,sat,,,,,
+Monthly budget review,MONTHLY,PENDING,Review spending and savings,high,30,,,$10 donation to charity if skipped,MEDIUM,,
