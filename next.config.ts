@@ -8,6 +8,8 @@ const buildConfig = async (): Promise<NextConfig> => {
   const base: NextConfig = {
     reactStrictMode: true,
     turbopack: {},
+    // Required for AWS Amplify SSR hosting
+    output: "standalone",
   };
 
   if (isDev) return base;

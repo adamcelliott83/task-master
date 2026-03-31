@@ -119,3 +119,61 @@ prisma/
 
 - **Test-Driven Development (TDD)**: Tests are written to define expected behaviour before or alongside implementation. Run `npm test` at any time.
 - **Spec-Driven Development**: Zod schemas in `src/schemas/` are the single source of truth for all data shapes — used by API routes, forms, and tests alike.
+
+---
+
+## Deploying to AWS Amplify
+
+This repo includes an `amplify.yml` build spec. Amplify handles Next.js SSR hosting; you just need a PostgreSQL database.
+
+### Step 1 — Create a free PostgreSQL database (Neon)
+
+1. Go to **[neon.tech](https://neon.tech)** and sign up (free tier, no credit card)
+2. Create a new project — name it `taskmaster`
+3. Copy the **connection string** — it looks like:
+   ```
+   postgresql://user:password@ep-xxx.us-east-2.aws.neon.tech/taskmaster?sslmode=require
+   ```
+
+> **Alternatives:** Supabase (supabase.com) also has a free PostgreSQL tier. AWS RDS costs ~$15/month but stays in the AWS ecosystem.
+
+### Step 2 — Push the schema to your database
+
+Run this once from your local machine (with the Neon connection string in your `.env`):
+
+```bash
+npm run db:push
+```
+
+### Step 3 — Connect Amplify to GitHub
+
+1. Open the **AWS Amplify console** → click **"Create new app"**
+2. Choose **"From Git"** → connect your GitHub account
+3. Select repository `adamcelliott83/task-master`
+4. Set branch to `claude/task-master-pwa-Zm1bH`
+5. Amplify will auto-detect the `amplify.yml` — no manual build settings needed
+
+### Step 4 — Set environment variables
+
+In Amplify console → **App settings → Environment variables**, add:
+
+| Key | Value |
+|---|---|
+| `DATABASE_URL` | Your Neon connection string (with `?sslmode=require`) |
+| `AUTH_SECRET` | Any random string, 32+ characters — generate with `openssl rand -base64 32` |
+| `AUTH_URL` | `https://<your-branch>.<your-app-id>.amplifyapp.com` (shown after first deploy) |
+
+> **Note:** `AUTH_URL` can be updated after the first deploy once you know your Amplify domain.
+
+### Step 5 — Deploy
+
+Click **"Save and deploy"**. Amplify will:
+1. Run `npm ci` and `npx prisma generate`
+2. Run `npm run build`
+3. Deploy to a live HTTPS URL like `https://main.d1abc123.amplifyapp.com`
+
+Your app is now live. Install it as a PWA from Chrome/Safari using the browser's "Add to Home Screen" option.
+
+### Custom domain (optional)
+
+In Amplify console → **Domain management** → add your own domain. Amplify provisions an SSL certificate automatically via AWS Certificate Manager.
